@@ -1,16 +1,26 @@
+import math
 import sys
-
+import numpy as np
+import mysymnmf as sm
+import pandas as pd
 
 def main():
+    np.random.seed(0)
     N = len(sys.argv)
     if (N == 2):
         path = sys.argv[1]
     else:
         print("An Error Has Occurred")
         return
-    clusters = Hw1(path)
-
-
+    clusters1 = Hw1(path)
+    # the m part is missing, need to use average of W
+    file1_pd = pd.read_csv(path, header=None)
+    n = file1_pd.shape[0]
+    m = 0
+    k = validateK(n)
+    r = math.sqrt(m / k)
+    H = np.random.uniform(low=0, high=r, size=(n, k))
+    centroides = sm.symnmf(path, H, n)
 
 if __name__ == "__main__":
     main()
