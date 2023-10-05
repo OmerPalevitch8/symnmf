@@ -7,24 +7,71 @@ import pandas as pd
 def main():
     np.random.seed(0)
     N = len(sys.argv)
-    if (N == 2):
-        path = sys.argv[1]
+    if (N == 3):
+        k = sys.argv[1]
+        path = sys.argv[2]
     else:
         print("An Error Has Occurred")
         return
-    clusters1 = Hw1(path)
-    # the m part is missing, need to use average of W
-    file1_pd = pd.read_csv(path, header=None)
-    n = file1_pd.shape[0]
-    m = 0
-    k = validateK(n)
+    clusters_kmean = Hw1(path)
+    file_mat = np.loadtxt(path)
+    rows = file_mat.shape[0]
+    col = file_mat.shape[0][0]
+    W = sm.norm(file_mat, rows, col)
+    W_array = np.array((W))
+    n = W_array.shape[0]
+    m = np.mean(W_array)
     r = math.sqrt(m / k)
     H = np.random.uniform(low=0, high=r, size=(n, k))
-    centroides = sm.symnmf(path, H, n)
+    H_new = sm.symnmf(H, W, n, k)
+    clusters_symnmf = [n][n]
+    for i in range(n):
+        max_in_row = H_new[i][0]
+        max_index = 0
+        for j in range(1,n):
+            if(H_new[i][j]>max_in_row):
+                max_in_row = H_new[i][j]
+                max_index = j
+        clusters_symnmf[max_index] = clusters_symnmf[max_index] + H_new[i]
+    a_kmeans = find_a(clusters_kmean)
+    b_kmeans = find_b(clusters_kmean)
+    Sil_kmeans = find_sil(a_kmeans,b_kmeans)
+    a_symnmf = find_a(clusters_symnmf)
+    b_symnmf = find_b(clusters_symnmf)
+    Sil_symnmf = find_sil(a_symnmf, b_symnmf)
+    print("nmf: " + Sil_symnmf)
+    print("kmeans: " + Sil_kmeans)
+
+
+
+
 
 if __name__ == "__main__":
     main()
+def find_sil(a,b):
+    return ((b-a)/max(a,b))
+def find_a(clusters):
+    sum = 0
+    iter = 0
+    for i in range(len(clusters)):
+        for j in range(len(clusters[i])):
+            for k in range(len(clusters[i])):
+                if(k!=j):
+                    iter +=1
+                    sum+=(clusters[i][j]-clusters[i][k])
+    return sum/iter
 
+def find_b(clusters):
+    sum = 0
+    iter = 0
+    for i in range(len(clusters)):
+        for j in range(len(clusters[i])):
+            for k in range(clusters[i]):
+                for m in range(len(clusters[i])):
+                    if (k != i):
+                        iter += 1
+                        sum += (clusters[i][j] - clusters[k][m])
+    return sum / iter
 
 def Hw1(path):
     arr = read_file(path)

@@ -1,35 +1,36 @@
 import math
 import sys
-import pandas as pd
 import mysymnmf as sm
 import numpy as np
 
 def main():
     num_arg = len(sys.argv)
-    if (num_arg != 3):
+    if (num_arg != 4):
         print("An Error Has Occurred")
         return
     else:
-        k = float(sys.argv[0])
-        goal = sys.argv[1]
-        text_file = sys.argv[2]
+        k = float(sys.argv[1])
+        goal = sys.argv[2]
+        text_file = sys.argv[3]
+    file_mat = np.loadtxt(text_file)
+    rows = file_mat.shape[0]
+    col = file_mat.shape[0][0]
     if(goal == "symnmf"):
         np.random.seed(0)
-        W = sm.norm(text_file)
+        W = sm.norm(file_mat,rows,col)
         W_array = np.array((W))
         n = W_array.shape[0]
         m = np.mean(W_array)
-        # the m part is missing, need to use average of W
         r = math.sqrt(m / k)
         H = np.random.uniform(low=0, high=r, size=(n, k))
-        sm.symnmf(text_file,H,W)
+        sm.symnmf(H,W,n,k)
         return
     elif(goal == "sym"):
-        sm.sym(text_file)
+        sm.sym(file_mat,rows,col)
     elif(goal == "dgd"):
-        sm.dgd(text_file)
+        sm.dgd(file_mat,rows,col)
     elif(goal == "norm"):
-        sm.norm(text_file)
+        sm.norm(file_mat,rows,col)
     else:
         print("An Error Has Occurred")
         return
