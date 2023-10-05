@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
-EXECUTABLE = symnmf.C
+EXECUTABLE = symnmf.c
 
 all: $(EXECUTABLE)
 
