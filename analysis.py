@@ -41,9 +41,7 @@ def Hw1(path):
         print("An Error Has Occurred")
         return
     return clusters
-    for cluster in clusters:
-        st = ",".join(["%.4f" % elem for elem in cluster[0]])
-        print(st)
+
 
 
     #make sure k is valid
@@ -115,7 +113,7 @@ def k_means(k,iter_max,arr):
     return clusters
 
 def update_centroids(k,smaller_then_eps,clusters):
-    eps = 0.001
+    eps = math.exp(-4)
     max_dist = 0
     for i in range(k):
         old_means= clusters[i][0]
