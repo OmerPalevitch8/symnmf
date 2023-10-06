@@ -20,17 +20,13 @@ def main():
     clusters_kmean_label = find_clusters(points_nmf,k,centroids_kmean)
     rows = len(points_nmf[0])
     col = len(points_nmf)
-    #W = sm.norm(file_mat, rows, col)
-    path_norm = "C:/Users/omer.pa/Desktop/school/third_year/second_semester/Software_project/symnmf/norm.txt"
-    W=read_file_nmf(path_norm)
+    W = sm.norm(points_nmf, rows, col)
     W_array = np.array(W)
     n = W_array.shape[0]
     m = np.mean(W_array)
     r = math.sqrt(m / k)
     H = np.random.uniform(low=0, high=r, size=(n, k))
-    #H_new = sm.symnmf(H, W, n, k)
-    H_path = "C:/Users/omer.pa/Desktop/school/third_year/second_semester/Software_project/symnmf/H_path.txt"
-    H_new = read_file_nmf(H_path)
+    H_new = sm.symnmf(H, W, n, k)
     H_new_pd = np.array(H_new)
     labels_nmf = np.argmax(H_new_pd, axis=1)
     Sil_symnmf = silhouette_score(points_nmf,labels_nmf)
